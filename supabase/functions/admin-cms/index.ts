@@ -55,6 +55,9 @@ Deno.serve(async (req) => {
       'projects', 'achievements', 'leadership_content', 'contact_info', 'site_settings'
     ];
 
+    // Tables that have sort_order column
+    const tablesWithSortOrder = ['skill_categories', 'skills', 'projects', 'achievements'];
+
     if (!tables.includes(resource)) {
       return new Response(
         JSON.stringify({ error: 'Invalid resource' }),
@@ -63,10 +66,14 @@ Deno.serve(async (req) => {
     }
 
     if (method === 'GET') {
-      const { data, error } = await supabase
-        .from(resource)
-        .select('*')
-        .order('sort_order', { ascending: true });
+      let query = supabase.from(resource).select('*');
+      
+      // Only apply sort_order for tables that have it
+      if (tablesWithSortOrder.includes(resource)) {
+        query = query.order('sort_order', { ascending: true });
+      }
+      
+      const { data, error } = await query;
 
       if (error) throw error;
 
