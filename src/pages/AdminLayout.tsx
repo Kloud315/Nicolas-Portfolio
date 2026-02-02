@@ -16,7 +16,12 @@ import {
   Menu,
   X,
   ChevronLeft,
+  Loader2,
 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -36,10 +41,16 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
-    navigate('/admin');
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      navigate('/admin');
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -154,6 +165,14 @@ export default function AdminLayout() {
       <main className="flex-1 lg:p-8 p-4 pt-20 lg:pt-8 overflow-auto">
         <Outlet />
       </main>
+
+      {/* Logout Loading Modal */}
+      <Dialog open={isLoggingOut}>
+        <DialogContent className="sm:max-w-[280px] flex flex-col items-center justify-center gap-4 py-8" onPointerDownOutside={(e) => e.preventDefault()}>
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
+          <p className="text-foreground font-medium">Logging out...</p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
