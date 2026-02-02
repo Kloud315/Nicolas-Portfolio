@@ -3,19 +3,40 @@ import { supabase } from '@/integrations/supabase/client';
 import { updateSiteSettings, createSiteSettings, uploadFile } from '@/lib/cms-api';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Save, Loader2, Upload, FileText, User } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Save, Loader2, Upload, FileText, User, Lock, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+const passwordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+  confirmPassword: z.string().min(1, 'Please confirm your new password'),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
 
 export default function AdminSettings() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingResume, setIsUploadingResume] = useState(false);
   const [isUploadingProfile, setIsUploadingProfile] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [settingsId, setSettingsId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     resume_url: '',
     profile_image_url: '',
   });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const profileInputRef = useRef<HTMLInputElement>(null);
@@ -123,6 +144,56 @@ export default function AdminSettings() {
       toast.error('Failed to save settings');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordErrors({});
+
+    // Validate with zod
+    const result = passwordSchema.safeParse(passwordData);
+    if (!result.success) {
+      const errors: Record<string, string> = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0] as string] = err.message;
+        }
+      });
+      setPasswordErrors(errors);
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      const token = sessionStorage.getItem('admin_session_token');
+      if (!token) {
+        toast.error('Session expired. Please log in again.');
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('admin-auth/change-password', {
+        body: {
+          token,
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      toast.success('Password changed successfully!');
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (error) {
+      console.error('Password change error:', error);
+      toast.error('Failed to change password');
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
@@ -267,6 +338,110 @@ export default function AdminSettings() {
             </>
           )}
         </Button>
+      </div>
+
+      {/* Password Change Section */}
+      <div className="glass-card p-6 space-y-6">
+        <div>
+          <Label className="text-lg font-semibold flex items-center gap-2">
+            <Lock className="w-5 h-5 text-primary" />
+            Change Password
+          </Label>
+          <p className="text-sm text-muted-foreground mt-1">
+            Update your admin password for security
+          </p>
+        </div>
+
+        <form onSubmit={handlePasswordChange} className="space-y-4">
+          {/* Current Password */}
+          <div className="space-y-2">
+            <Label htmlFor="currentPassword">Current Password</Label>
+            <div className="relative">
+              <Input
+                id="currentPassword"
+                type={showCurrentPassword ? 'text' : 'password'}
+                value={passwordData.currentPassword}
+                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                className={passwordErrors.currentPassword ? 'border-destructive' : ''}
+                placeholder="Enter current password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            {passwordErrors.currentPassword && (
+              <p className="text-sm text-destructive">{passwordErrors.currentPassword}</p>
+            )}
+          </div>
+
+          {/* New Password */}
+          <div className="space-y-2">
+            <Label htmlFor="newPassword">New Password</Label>
+            <div className="relative">
+              <Input
+                id="newPassword"
+                type={showNewPassword ? 'text' : 'password'}
+                value={passwordData.newPassword}
+                onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                className={passwordErrors.newPassword ? 'border-destructive' : ''}
+                placeholder="Enter new password (min. 6 characters)"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            {passwordErrors.newPassword && (
+              <p className="text-sm text-destructive">{passwordErrors.newPassword}</p>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                value={passwordData.confirmPassword}
+                onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                className={passwordErrors.confirmPassword ? 'border-destructive' : ''}
+                placeholder="Confirm new password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            {passwordErrors.confirmPassword && (
+              <p className="text-sm text-destructive">{passwordErrors.confirmPassword}</p>
+            )}
+          </div>
+
+          <Button type="submit" disabled={isChangingPassword}>
+            {isChangingPassword ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Changing Password...
+              </>
+            ) : (
+              <>
+                <Lock className="w-4 h-4 mr-2" />
+                Change Password
+              </>
+            )}
+          </Button>
+        </form>
       </div>
     </div>
   );
