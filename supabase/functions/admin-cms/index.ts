@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-token',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 };
 
 async function verifyAdminSession(supabase: any, token: string): Promise<boolean> {
@@ -33,8 +34,23 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split('/').filter(Boolean);
+    const resource = pathParts[pathParts.length - 1];
+    const method = req.method;
+
     // Verify admin token for all requests
     const adminToken = req.headers.get('x-admin-token');
+    console.log(
+      JSON.stringify({
+        at: 'admin-cms',
+        method,
+        pathname: url.pathname,
+        resource,
+        hasAdminToken: !!adminToken,
+      })
+    );
+
     const isValid = await verifyAdminSession(supabase, adminToken || '');
     
     if (!isValid) {
@@ -43,11 +59,6 @@ Deno.serve(async (req) => {
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    const url = new URL(req.url);
-    const pathParts = url.pathname.split('/').filter(Boolean);
-    const resource = pathParts[pathParts.length - 1];
-    const method = req.method;
 
     // Handle different resources
     const tables = [
