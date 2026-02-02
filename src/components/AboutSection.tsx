@@ -1,6 +1,8 @@
 import { Target, Lightbulb, Users, Rocket } from 'lucide-react';
+import { useAboutContent } from '@/hooks/use-portfolio-data';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const traits = [
+const defaultTraits = [
   {
     icon: Target,
     title: 'Strategic Thinker',
@@ -24,6 +26,23 @@ const traits = [
 ];
 
 export function AboutSection() {
+  const { data: aboutContent, isLoading } = useAboutContent();
+
+  const defaultContent = `I'm a <span class="text-foreground font-semibold">4th-year IT student</span> at 
+Lyceum of the Philippines University – Cavite, driven by an unwavering passion for 
+technology and leadership. As a <span class="text-primary font-semibold">DOST-SEI Scholar</span> and 
+<span class="text-primary font-semibold"> Magna Cum Laude candidate</span>, I've consistently 
+demonstrated academic excellence while pursuing real-world impact.
+
+My journey in tech is defined by action—from leading the development of 
+<span class="text-foreground font-semibold"> GameSchedGo</span> for the City Government of 
+Trece Martires to founding <span class="text-foreground font-semibold">Sukey</span>, a B2B 
+marketplace platform for Philippine MSMEs. I believe in building systems that matter.
+
+With an <span class="text-primary font-semibold">ENTJ (Commander)</span> personality, 
+I thrive on strategic challenges, decisive action, and leading teams toward ambitious goals. 
+My technical skills are matched by a deep commitment to communication, organization, and vision.`;
+
   return (
     <section id="about" className="section-padding bg-background relative">
       {/* Subtle background pattern */}
@@ -51,29 +70,28 @@ export function AboutSection() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left Content */}
             <div className="space-y-6">
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                I'm a <span className="text-foreground font-semibold">4th-year IT student</span> at 
-                Lyceum of the Philippines University – Cavite, driven by an unwavering passion for 
-                technology and leadership. As a <span className="text-primary font-semibold">DOST-SEI Scholar</span> and 
-                <span className="text-primary font-semibold"> Magna Cum Laude candidate</span>, I've consistently 
-                demonstrated academic excellence while pursuing real-world impact.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                My journey in tech is defined by action—from leading the development of 
-                <span className="text-foreground font-semibold"> GameSchedGo</span> for the City Government of 
-                Trece Martires to founding <span className="text-foreground font-semibold">Sukey</span>, a B2B 
-                marketplace platform for Philippine MSMEs. I believe in building systems that matter.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                With an <span className="text-primary font-semibold">ENTJ (Commander)</span> personality, 
-                I thrive on strategic challenges, decisive action, and leading teams toward ambitious goals. 
-                My technical skills are matched by a deep commitment to communication, organization, and vision.
-              </p>
+              {isLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-full" />
+                  <Skeleton className="h-6 w-1/2" />
+                </div>
+              ) : (
+                <div 
+                  className="text-lg text-muted-foreground leading-relaxed space-y-6 [&>p]:mb-4"
+                  dangerouslySetInnerHTML={{ __html: aboutContent?.content || defaultContent }}
+                />
+              )}
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-6 pt-6">
                 <div className="text-center">
-                  <div className="text-3xl lg:text-4xl font-bold text-gradient">1.35</div>
+                  <div className="text-3xl lg:text-4xl font-bold text-gradient">
+                    {aboutContent?.gwa || '1.35'}
+                  </div>
                   <div className="text-sm text-muted-foreground mt-1">GWA</div>
                 </div>
                 <div className="text-center">
@@ -89,7 +107,7 @@ export function AboutSection() {
 
             {/* Right Content - Traits */}
             <div className="grid sm:grid-cols-2 gap-4">
-              {traits.map((trait, index) => (
+              {defaultTraits.map((trait, index) => (
                 <div
                   key={trait.title}
                   className="glass-card p-6 card-hover"

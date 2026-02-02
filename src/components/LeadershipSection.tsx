@@ -1,39 +1,58 @@
 import { Compass, Crown, Zap, TrendingUp, Eye, Brain } from 'lucide-react';
+import { useLeadershipContent } from '@/hooks/use-portfolio-data';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const leadershipTraits = [
+const iconMap: Record<string, React.ElementType> = {
+  Compass,
+  Crown,
+  Zap,
+  TrendingUp,
+  Eye,
+  Brain,
+};
+
+interface LeadershipTrait {
+  icon: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+}
+
+// Default leadership traits
+const defaultLeadershipTraits: LeadershipTrait[] = [
   {
-    icon: Crown,
+    icon: 'Crown',
     title: 'Commander (ENTJ)',
     subtitle: 'Personality Type',
     description:
       'Natural-born leader with the drive and determination to achieve ambitious goals. Combines strategic vision with decisive action.',
   },
   {
-    icon: Brain,
+    icon: 'Brain',
     title: 'Strategic Thinker',
     description:
       'Excels at analyzing complex situations and developing long-term plans. Sees patterns and opportunities others might miss.',
   },
   {
-    icon: Zap,
+    icon: 'Zap',
     title: 'Decisive Leader',
     description:
       'Makes confident decisions under pressure. Takes ownership of outcomes and inspires teams to execute with precision.',
   },
   {
-    icon: TrendingUp,
+    icon: 'TrendingUp',
     title: 'Results-Oriented',
     description:
       'Laser-focused on achieving measurable outcomes. Sets ambitious targets and drives continuous improvement.',
   },
   {
-    icon: Eye,
+    icon: 'Eye',
     title: 'Vision-Driven',
     description:
       'Articulates compelling visions that inspire and motivate. Transforms abstract ideas into actionable roadmaps.',
   },
   {
-    icon: Compass,
+    icon: 'Compass',
     title: 'Growth-Focused',
     description:
       'Committed to personal and professional development. Embraces challenges as opportunities to learn and evolve.',
@@ -64,6 +83,13 @@ const experiences = [
 ];
 
 export function LeadershipSection() {
+  const { data: leadershipContent, isLoading } = useLeadershipContent();
+  
+  const leadershipTraits: LeadershipTrait[] = 
+    leadershipContent?.traits && Array.isArray(leadershipContent.traits) && leadershipContent.traits.length > 0
+      ? (leadershipContent.traits as unknown as LeadershipTrait[])
+      : defaultLeadershipTraits;
+
   return (
     <section id="leadership" className="section-padding bg-background relative overflow-hidden">
       {/* Background decoration */}
@@ -78,43 +104,63 @@ export function LeadershipSection() {
               Personality & Leadership
             </span>
             <h2 className="section-title">
-              Leadership & <span className="text-gradient">Mindset</span>
+              {leadershipContent?.title || 'Leadership &'} <span className="text-gradient">Mindset</span>
             </h2>
             <p className="section-subtitle mx-auto mt-4">
-              Beyond technical skills – the character traits and leadership philosophy that drive impact
+              {leadershipContent?.description || 'Beyond technical skills – the character traits and leadership philosophy that drive impact'}
             </p>
           </div>
 
           {/* Leadership Traits Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-            {leadershipTraits.map((trait, index) => (
-              <div
-                key={trait.title}
-                className={`glass-card p-6 card-hover ${
-                  index === 0 ? 'sm:col-span-2 lg:col-span-1 border-primary/30' : ''
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  <div
-                    className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      index === 0 ? 'accent-gradient' : 'bg-primary/10 border border-primary/30'
-                    }`}
-                  >
-                    <trait.icon
-                      className={`w-6 h-6 ${index === 0 ? 'text-primary-foreground' : 'text-primary'}`}
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">{trait.title}</h3>
-                    {trait.subtitle && (
-                      <p className="text-xs text-primary font-medium mb-2">{trait.subtitle}</p>
-                    )}
-                    <p className="text-sm text-muted-foreground mt-1">{trait.description}</p>
+          {isLoading ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="glass-card p-6 space-y-4">
+                  <div className="flex items-start gap-4">
+                    <Skeleton className="w-12 h-12 rounded-lg" />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-5 w-32" />
+                      <Skeleton className="h-4 w-full" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+              {leadershipTraits.map((trait, index) => {
+                const IconComponent = iconMap[trait.icon] || Crown;
+                
+                return (
+                  <div
+                    key={trait.title}
+                    className={`glass-card p-6 card-hover ${
+                      index === 0 ? 'sm:col-span-2 lg:col-span-1 border-primary/30' : ''
+                    }`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div
+                        className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                          index === 0 ? 'accent-gradient' : 'bg-primary/10 border border-primary/30'
+                        }`}
+                      >
+                        <IconComponent
+                          className={`w-6 h-6 ${index === 0 ? 'text-primary-foreground' : 'text-primary'}`}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground">{trait.title}</h3>
+                        {trait.subtitle && (
+                          <p className="text-xs text-primary font-medium mb-2">{trait.subtitle}</p>
+                        )}
+                        <p className="text-sm text-muted-foreground mt-1">{trait.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* Experience Timeline */}
           <div className="max-w-3xl mx-auto">
