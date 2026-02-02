@@ -211,6 +211,92 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (action === 'change-password' && req.method === 'POST') {
+      const { token, currentPassword, newPassword } = await req.json();
+
+      if (!token || !currentPassword || !newPassword) {
+        return new Response(
+          JSON.stringify({ error: 'Token, current password, and new password are required' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Validate new password
+      if (newPassword.length < 6) {
+        return new Response(
+          JSON.stringify({ error: 'New password must be at least 6 characters' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Verify session
+      const { data: session, error: sessionError } = await supabase
+        .from('admin_sessions')
+        .select('id, expires_at, admin_user_id')
+        .eq('token', token)
+        .single();
+
+      if (sessionError || !session) {
+        return new Response(
+          JSON.stringify({ error: 'Invalid session' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (new Date(session.expires_at) < new Date()) {
+        await supabase.from('admin_sessions').delete().eq('id', session.id);
+        return new Response(
+          JSON.stringify({ error: 'Session expired' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Get admin user
+      const { data: adminUser, error: userError } = await supabase
+        .from('admin_users')
+        .select('id, password_hash')
+        .eq('id', session.admin_user_id)
+        .single();
+
+      if (userError || !adminUser) {
+        return new Response(
+          JSON.stringify({ error: 'User not found' }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Verify current password
+      const isCurrentValid = await verifyPassword(currentPassword, adminUser.password_hash);
+      if (!isCurrentValid) {
+        return new Response(
+          JSON.stringify({ error: 'Current password is incorrect' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Hash new password
+      const { hash: newHash } = await hashPassword(newPassword);
+
+      // Update password
+      const { error: updateError } = await supabase
+        .from('admin_users')
+        .update({ password_hash: newHash, updated_at: new Date().toISOString() })
+        .eq('id', adminUser.id);
+
+      if (updateError) {
+        console.error('Password update error:', updateError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to update password' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'Password changed successfully' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
       JSON.stringify({ error: 'Invalid action' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
