@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Linkedin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Github, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useContactInfo } from '@/hooks/use-portfolio-data';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function ContactSection() {
   const { toast } = useToast();
+  const { data: contactInfo, isLoading } = useContactInfo();
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,6 +16,13 @@ export function ContactSection() {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Default contact info
+  const email = contactInfo?.email || 'johnpatricknicolas15@gmail.com';
+  const phone = contactInfo?.phone || '0960-035-6307 | 0951-277-0041';
+  const location = contactInfo?.location || 'San Miguel A, Maragondon, Cavite';
+  const linkedin = contactInfo?.linkedin || 'https://www.linkedin.com/in/john-patrick-nicolas-29b522388/';
+  const github = contactInfo?.github;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,61 +72,94 @@ export function ContactSection() {
                 </p>
               </div>
 
-              <div className="space-y-6">
-                <a
-                  href="mailto:johnpatricknicolas15@gmail.com"
-                  className="flex items-center gap-4 group"
-                >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Mail className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="text-foreground font-medium group-hover:text-primary transition-colors">
-                      johnpatricknicolas15@gmail.com
-                    </p>
-                  </div>
-                </a>
-
-                <a href="tel:+639600356307" className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Phone className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Phone</p>
-                    <p className="text-foreground font-medium group-hover:text-primary transition-colors">
-                      0960-035-6307 | 0951-277-0041
-                    </p>
-                  </div>
-                </a>
-
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Location</p>
-                    <p className="text-foreground font-medium">San Miguel A, Maragondon, Cavite</p>
-                  </div>
+              {isLoading ? (
+                <div className="space-y-6">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <Skeleton className="w-12 h-12 rounded-lg" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-5 w-48" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
+              ) : (
+                <div className="space-y-6">
+                  <a
+                    href={`mailto:${email}`}
+                    className="flex items-center gap-4 group"
+                  >
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Mail className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Email</p>
+                      <p className="text-foreground font-medium group-hover:text-primary transition-colors">
+                        {email}
+                      </p>
+                    </div>
+                  </a>
 
-                <a
-                  href="https://www.linkedin.com/in/john-patrick-nicolas-29b522388/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 group"
-                >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Linkedin className="w-5 h-5 text-primary" />
+                  <a href={`tel:${phone.split(' | ')[0]?.replace(/-/g, '')}`} className="flex items-center gap-4 group">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Phone className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Phone</p>
+                      <p className="text-foreground font-medium group-hover:text-primary transition-colors">
+                        {phone}
+                      </p>
+                    </div>
+                  </a>
+
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Location</p>
+                      <p className="text-foreground font-medium">{location}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">LinkedIn</p>
-                    <p className="text-foreground font-medium group-hover:text-primary transition-colors">
-                      Connect with me
-                    </p>
-                  </div>
-                </a>
-              </div>
+
+                  <a
+                    href={linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 group"
+                  >
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Linkedin className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">LinkedIn</p>
+                      <p className="text-foreground font-medium group-hover:text-primary transition-colors">
+                        Connect with me
+                      </p>
+                    </div>
+                  </a>
+
+                  {github && (
+                    <a
+                      href={github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-4 group"
+                    >
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <Github className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">GitHub</p>
+                        <p className="text-foreground font-medium group-hover:text-primary transition-colors">
+                          View my code
+                        </p>
+                      </div>
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Contact Form */}

@@ -1,18 +1,24 @@
-import { ExternalLink, Github, Star } from 'lucide-react';
+import { ExternalLink, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useProjects } from '@/hooks/use-portfolio-data';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface Project {
+  id: string;
   title: string;
   role: string;
   description: string;
   tech: string[];
-  impact: string;
-  featured?: boolean;
-  link?: string;
+  impact: string | null;
+  featured: boolean;
+  link: string | null;
+  image_url: string | null;
 }
 
-const projects: Project[] = [
+// Fallback projects if database is empty
+const defaultProjects: Project[] = [
   {
+    id: '1',
     title: 'GameSchedGo',
     role: 'Lead Developer / Project Leader',
     description:
@@ -21,8 +27,10 @@ const projects: Project[] = [
     impact: 'Successfully deployed on Hostinger with custom domain. Serving the local sports community with streamlined scheduling operations.',
     featured: true,
     link: 'https://gameschedgo.com',
+    image_url: null,
   },
   {
+    id: '2',
     title: 'Sukey - B2B Marketplace CMS',
     role: 'Startup Leader',
     description:
@@ -30,30 +38,44 @@ const projects: Project[] = [
     tech: ['Web Development', 'CMS', 'B2B Platform', 'MSME Solutions'],
     impact: 'National-level startup competition entry showcasing innovative solutions for Philippine businesses.',
     featured: true,
+    link: null,
+    image_url: null,
   },
   {
+    id: '3',
     title: 'Bookstore Management System',
     role: 'System Analyst / Project Leader',
     description:
       'A comprehensive bookstore management solution featuring inventory tracking, sales management, customer records, and reporting capabilities.',
     tech: ['PHP', 'MySQL', 'HTML/CSS', 'JavaScript'],
     impact: 'Streamlined bookstore operations with automated inventory and sales tracking.',
+    featured: false,
+    link: null,
+    image_url: null,
   },
   {
+    id: '4',
     title: 'Pension System',
     role: 'System Analyst / Project Leader',
     description:
       'A pension management system designed to handle beneficiary records, payment schedules, and administrative workflows.',
     tech: ['PHP', 'MySQL', 'Database Design', 'CRUD Operations'],
     impact: 'Demonstrated expertise in complex database design and sensitive data handling.',
+    featured: false,
+    link: null,
+    image_url: null,
   },
   {
+    id: '5',
     title: 'QueECSA Queueing System',
     role: 'Developer',
     description:
       'A digital queueing system developed for the LPU Cavite COECSA Accounting Office to streamline student services and reduce wait times.',
     tech: ['Web Development', 'Queue Management', 'Real-time Updates'],
     impact: 'Improved service efficiency for the university accounting department.',
+    featured: false,
+    link: null,
+    image_url: null,
   },
 ];
 
@@ -74,6 +96,16 @@ function ProjectCard({ project }: { project: Project }) {
       )}
 
       <div className="space-y-4">
+        {project.image_url && (
+          <div className="aspect-video rounded-lg overflow-hidden mb-4">
+            <img 
+              src={project.image_url} 
+              alt={project.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+        
         <div>
           <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-1">{project.title}</h3>
           <p className="text-primary text-sm font-medium">{project.role}</p>
@@ -89,12 +121,14 @@ function ProjectCard({ project }: { project: Project }) {
           ))}
         </div>
 
-        <div className="pt-4 border-t border-border">
-          <p className="text-sm text-muted-foreground">
-            <span className="text-foreground font-medium">Impact: </span>
-            {project.impact}
-          </p>
-        </div>
+        {project.impact && (
+          <div className="pt-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">
+              <span className="text-foreground font-medium">Impact: </span>
+              {project.impact}
+            </p>
+          </div>
+        )}
 
         {project.link && (
           <div className="pt-2">
@@ -112,6 +146,10 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 export function ProjectsSection() {
+  const { data: projects, isLoading } = useProjects();
+  
+  const displayProjects = projects && projects.length > 0 ? projects : defaultProjects;
+
   return (
     <section id="projects" className="section-padding bg-background relative">
       <div className="container px-4 sm:px-6 lg:px-8">
@@ -130,11 +168,28 @@ export function ProjectsSection() {
           </div>
 
           {/* Projects Grid */}
-          <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-            {projects.map((project) => (
-              <ProjectCard key={project.title} project={project} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="glass-card p-6 lg:p-8 space-y-4">
+                  <Skeleton className="h-8 w-48" />
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-20 w-full" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-6 w-16" />
+                    <Skeleton className="h-6 w-16" />
+                    <Skeleton className="h-6 w-16" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+              {displayProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
