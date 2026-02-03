@@ -199,50 +199,103 @@ export type Database = {
         }
         Relationships: []
       }
-      projects: {
+      project_categories: {
         Row: {
           created_at: string
-          description: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          detailed_description: string
           featured: boolean
           id: string
           image_url: string | null
           impact: string | null
+          is_visible: boolean | null
           link: string | null
+          project_type: string | null
           role: string
+          short_description: string | null
           sort_order: number
+          status: string | null
           tech: string[]
           title: string
           updated_at: string
         }
         Insert: {
+          category_id?: string | null
           created_at?: string
-          description: string
+          detailed_description: string
           featured?: boolean
           id?: string
           image_url?: string | null
           impact?: string | null
+          is_visible?: boolean | null
           link?: string | null
+          project_type?: string | null
           role: string
+          short_description?: string | null
           sort_order?: number
+          status?: string | null
           tech?: string[]
           title: string
           updated_at?: string
         }
         Update: {
+          category_id?: string | null
           created_at?: string
-          description?: string
+          detailed_description?: string
           featured?: boolean
           id?: string
           image_url?: string | null
           impact?: string | null
+          is_visible?: boolean | null
           link?: string | null
+          project_type?: string | null
           role?: string
+          short_description?: string | null
           sort_order?: number
+          status?: string | null
           tech?: string[]
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projects_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "project_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_settings: {
         Row: {
