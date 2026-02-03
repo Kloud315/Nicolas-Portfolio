@@ -104,6 +104,12 @@ export const createSkill = (data: any) => cmsRequest('skills', 'POST', data);
 export const updateSkill = (data: any) => cmsRequest('skills', 'PUT', data);
 export const deleteSkill = (id: string) => cmsRequest('skills', 'DELETE', { id });
 
+// Project Categories
+export const getProjectCategories = () => cmsRequest<any[]>('project_categories', 'GET');
+export const createProjectCategory = (data: any) => cmsRequest('project_categories', 'POST', data);
+export const updateProjectCategory = (data: any) => cmsRequest('project_categories', 'PUT', data);
+export const deleteProjectCategory = (id: string) => cmsRequest('project_categories', 'DELETE', { id });
+
 // Projects
 export const getProjects = () => cmsRequest<any[]>('projects', 'GET');
 export const createProject = (data: any) => cmsRequest('projects', 'POST', data);

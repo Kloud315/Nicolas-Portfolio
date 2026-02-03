@@ -6,7 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Save, Loader2, Trash2, Edit2, Star, ExternalLink, Upload } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Plus, Save, Loader2, Trash2, Edit2, Star, ExternalLink, Upload, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -16,53 +24,79 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
+interface ProjectCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  sort_order: number;
+}
+
 interface Project {
   id: string;
   title: string;
   role: string;
-  description: string;
+  detailed_description: string;
+  short_description: string | null;
   tech: string[];
   impact: string | null;
   featured: boolean;
   link: string | null;
   image_url: string | null;
   sort_order: number;
+  category_id: string | null;
+  project_type: string | null;
+  status: string | null;
+  is_visible: boolean;
 }
+
+const PROJECT_TYPES = ['Web App', 'AI Tool', 'Dashboard', 'Mobile App', 'API', 'Library', 'Other'];
+const STATUS_OPTIONS = ['Completed', 'Ongoing'];
 
 export default function AdminProjects() {
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [categories, setCategories] = useState<ProjectCategory[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [filterCategory, setFilterCategory] = useState<string>('all');
   const [formData, setFormData] = useState({
     title: '',
     role: '',
-    description: '',
+    short_description: '',
+    detailed_description: '',
     tech: '',
     impact: '',
     featured: false,
     link: '',
     image_url: '',
+    category_id: '',
+    project_type: 'Web App',
+    status: 'Completed',
+    is_visible: true,
   });
 
   useEffect(() => {
-    fetchProjects();
+    fetchData();
   }, []);
 
-  const fetchProjects = async () => {
+  const fetchData = async () => {
     try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('sort_order');
+      const [projectsRes, categoriesRes] = await Promise.all([
+        supabase.from('projects').select('*').order('sort_order'),
+        supabase.from('project_categories').select('*').order('sort_order'),
+      ]);
 
-      if (error) throw error;
-      setProjects(data || []);
+      if (projectsRes.error) throw projectsRes.error;
+      if (categoriesRes.error) throw categoriesRes.error;
+
+      setProjects(projectsRes.data || []);
+      setCategories(categoriesRes.data || []);
     } catch (error) {
-      console.error('Error fetching projects:', error);
-      toast.error('Failed to load projects');
+      console.error('Error fetching data:', error);
+      toast.error('Failed to load data');
     } finally {
       setIsLoading(false);
     }
@@ -89,7 +123,7 @@ export default function AdminProjects() {
   };
 
   const handleSave = async () => {
-    if (!formData.title.trim() || !formData.role.trim() || !formData.description.trim()) {
+    if (!formData.title.trim() || !formData.role.trim() || !formData.detailed_description.trim()) {
       toast.error('Please fill in required fields');
       return;
     }
@@ -99,12 +133,17 @@ export default function AdminProjects() {
       const projectData = {
         title: formData.title,
         role: formData.role,
-        description: formData.description,
+        short_description: formData.short_description || null,
+        detailed_description: formData.detailed_description,
         tech: formData.tech.split(',').map(t => t.trim()).filter(Boolean),
         impact: formData.impact || null,
         featured: formData.featured,
         link: formData.link || null,
         image_url: formData.image_url || null,
+        category_id: formData.category_id || null,
+        project_type: formData.project_type,
+        status: formData.status,
+        is_visible: formData.is_visible,
       };
 
       if (editingProject) {
@@ -117,7 +156,7 @@ export default function AdminProjects() {
         toast.success('Project created!');
       }
       
-      await fetchProjects();
+      await fetchData();
       setDialogOpen(false);
       resetForm();
     } catch (error) {
@@ -135,7 +174,7 @@ export default function AdminProjects() {
       const { error } = await deleteProject(id);
       if (error) throw new Error(error);
       toast.success('Project deleted!');
-      await fetchProjects();
+      await fetchData();
     } catch (error) {
       console.error('Delete error:', error);
       toast.error('Failed to delete project');
@@ -147,12 +186,17 @@ export default function AdminProjects() {
     setFormData({
       title: project.title,
       role: project.role,
-      description: project.description,
+      short_description: project.short_description || '',
+      detailed_description: project.detailed_description,
       tech: project.tech.join(', '),
       impact: project.impact || '',
       featured: project.featured,
       link: project.link || '',
       image_url: project.image_url || '',
+      category_id: project.category_id || '',
+      project_type: project.project_type || 'Web App',
+      status: project.status || 'Completed',
+      is_visible: project.is_visible ?? true,
     });
     setDialogOpen(true);
   };
@@ -162,14 +206,31 @@ export default function AdminProjects() {
     setFormData({
       title: '',
       role: '',
-      description: '',
+      short_description: '',
+      detailed_description: '',
       tech: '',
       impact: '',
       featured: false,
       link: '',
       image_url: '',
+      category_id: '',
+      project_type: 'Web App',
+      status: 'Completed',
+      is_visible: true,
     });
   };
+
+  const getCategoryName = (categoryId: string | null) => {
+    if (!categoryId) return 'Uncategorized';
+    const category = categories.find(c => c.id === categoryId);
+    return category?.name || 'Unknown';
+  };
+
+  const filteredProjects = filterCategory === 'all' 
+    ? projects 
+    : filterCategory === 'uncategorized'
+      ? projects.filter(p => !p.category_id)
+      : projects.filter(p => p.category_id === filterCategory);
 
   if (isLoading) {
     return (
@@ -181,10 +242,10 @@ export default function AdminProjects() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Projects Manager</h1>
-          <p className="text-muted-foreground mt-1">Manage your portfolio projects</p>
+          <p className="text-muted-foreground mt-1">Manage your portfolio projects by category</p>
         </div>
         
         <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
@@ -205,7 +266,7 @@ export default function AdminProjects() {
                   <Input
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="GameSchedGo"
+                    placeholder="InternInterview AI"
                   />
                 </div>
                 <div className="space-y-2">
@@ -213,17 +274,61 @@ export default function AdminProjects() {
                   <Input
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    placeholder="Lead Developer"
+                    placeholder="Creator / Developer"
                   />
                 </div>
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Category</Label>
+                  <Select
+                    value={formData.category_id}
+                    onValueChange={(val) => setFormData({ ...formData, category_id: val })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Project Type</Label>
+                  <Select
+                    value={formData.project_type}
+                    onValueChange={(val) => setFormData({ ...formData, project_type: val })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROJECT_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <Label>Description *</Label>
+                <Label>Short Description</Label>
+                <Input
+                  value={formData.short_description}
+                  onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                  placeholder="Brief one-line description for previews"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Detailed Description *</Label>
                 <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="A comprehensive sports facility reservation system..."
+                  value={formData.detailed_description}
+                  onChange={(e) => setFormData({ ...formData, detailed_description: e.target.value })}
+                  placeholder="Full project description with features and functionality..."
                   rows={4}
                 />
               </div>
@@ -233,7 +338,7 @@ export default function AdminProjects() {
                 <Input
                   value={formData.tech}
                   onChange={(e) => setFormData({ ...formData, tech: e.target.value })}
-                  placeholder="HTML, CSS, JavaScript, PHP, MySQL"
+                  placeholder="React, AI, TypeScript, Lovable"
                 />
               </div>
 
@@ -242,18 +347,36 @@ export default function AdminProjects() {
                 <Textarea
                   value={formData.impact}
                   onChange={(e) => setFormData({ ...formData, impact: e.target.value })}
-                  placeholder="Successfully deployed and serving the local sports community..."
+                  placeholder="Key achievements and outcomes..."
                   rows={2}
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Project URL (optional)</Label>
-                <Input
-                  value={formData.link}
-                  onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-                  placeholder="https://gameschedgo.com"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Project URL (optional)</Label>
+                  <Input
+                    value={formData.link}
+                    onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                    placeholder="https://example.lovable.app"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(val) => setFormData({ ...formData, status: val })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUS_OPTIONS.map((status) => (
+                        <SelectItem key={status} value={status}>{status}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -280,12 +403,21 @@ export default function AdminProjects() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <Switch
-                  checked={formData.featured}
-                  onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
-                />
-                <Label>Featured Project</Label>
+              <div className="flex items-center gap-6 pt-2">
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={formData.featured}
+                    onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
+                  />
+                  <Label>Featured Project</Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={formData.is_visible}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_visible: checked })}
+                  />
+                  <Label>Visible on Portfolio</Label>
+                </div>
               </div>
 
               <Button onClick={handleSave} disabled={isSaving} className="w-full">
@@ -297,28 +429,73 @@ export default function AdminProjects() {
         </Dialog>
       </div>
 
+      {/* Category Filter */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-sm text-muted-foreground">Filter:</span>
+        <Button
+          variant={filterCategory === 'all' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setFilterCategory('all')}
+        >
+          All ({projects.length})
+        </Button>
+        {categories.map((cat) => {
+          const count = projects.filter(p => p.category_id === cat.id).length;
+          return (
+            <Button
+              key={cat.id}
+              variant={filterCategory === cat.id ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilterCategory(cat.id)}
+            >
+              {cat.name.split('/')[0].trim()} ({count})
+            </Button>
+          );
+        })}
+        <Button
+          variant={filterCategory === 'uncategorized' ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setFilterCategory('uncategorized')}
+        >
+          Uncategorized ({projects.filter(p => !p.category_id).length})
+        </Button>
+      </div>
+
       {/* Projects List */}
       <div className="space-y-4">
-        {projects.length === 0 ? (
+        {filteredProjects.length === 0 ? (
           <div className="glass-card p-12 text-center">
-            <p className="text-muted-foreground">No projects yet. Create one to get started!</p>
+            <p className="text-muted-foreground">No projects in this category. Create one to get started!</p>
           </div>
         ) : (
-          projects.map((project) => (
+          filteredProjects.map((project) => (
             <div key={project.id} className="glass-card p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h3 className="text-lg font-semibold text-foreground">{project.title}</h3>
                     {project.featured && (
-                      <span className="flex items-center gap-1 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary">
+                      <Badge variant="default" className="gap-1">
                         <Star className="w-3 h-3 fill-current" />
                         Featured
-                      </span>
+                      </Badge>
                     )}
+                    {!project.is_visible && (
+                      <Badge variant="secondary" className="gap-1">
+                        <EyeOff className="w-3 h-3" />
+                        Hidden
+                      </Badge>
+                    )}
+                    <Badge variant="outline">{project.project_type || 'Web App'}</Badge>
+                    <Badge variant={project.status === 'Completed' ? 'default' : 'secondary'}>
+                      {project.status || 'Completed'}
+                    </Badge>
                   </div>
-                  <p className="text-sm text-primary mb-2">{project.role}</p>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{project.description}</p>
+                  <p className="text-sm text-primary mb-1">{project.role}</p>
+                  <p className="text-xs text-muted-foreground mb-2">{getCategoryName(project.category_id)}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {project.short_description || project.detailed_description}
+                  </p>
                   <div className="flex flex-wrap gap-1 mt-3">
                     {project.tech.map((t) => (
                       <span key={t} className="tech-badge text-xs">{t}</span>

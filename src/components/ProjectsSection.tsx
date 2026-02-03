@@ -1,81 +1,55 @@
-import { ExternalLink, Star } from 'lucide-react';
+import { ExternalLink, Star, Folder } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useProjects } from '@/hooks/use-portfolio-data';
+import { Badge } from '@/components/ui/badge';
+import { useProjectsWithCategories } from '@/hooks/use-portfolio-data';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface Project {
   id: string;
   title: string;
   role: string;
-  description: string;
+  detailed_description: string;
+  short_description: string | null;
   tech: string[];
   impact: string | null;
   featured: boolean;
   link: string | null;
   image_url: string | null;
+  project_type: string | null;
+  status: string | null;
 }
 
-// Fallback projects if database is empty
-const defaultProjects: Project[] = [
+interface CategoryWithProjects {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  projects: Project[];
+}
+
+// Fallback data if database is empty
+const defaultCategories: CategoryWithProjects[] = [
   {
     id: '1',
-    title: 'GameSchedGo',
-    role: 'Lead Developer / Project Leader',
-    description:
-      'A comprehensive sports facility reservation and league management system developed for the City Government of Trece Martires, Cavite. Features include facility booking, league scheduling, team management, and real-time availability tracking.',
-    tech: ['HTML', 'CSS', 'JavaScript', 'PHP', 'MySQL', 'Bootstrap'],
-    impact: 'Successfully deployed on Hostinger with custom domain. Serving the local sports community with streamlined scheduling operations.',
-    featured: true,
-    link: 'https://gameschedgo.com',
-    image_url: null,
-  },
-  {
-    id: '2',
-    title: 'Sukey - B2B Marketplace CMS',
-    role: 'Startup Leader',
-    description:
-      'A localized B2B marketplace CMS designed specifically for MSMEs in the Philippines. Created as part of the Philippines Startup Challenge 10 with DICT Philippines, IIDB, and DSDAP.',
-    tech: ['Web Development', 'CMS', 'B2B Platform', 'MSME Solutions'],
-    impact: 'National-level startup competition entry showcasing innovative solutions for Philippine businesses.',
-    featured: true,
-    link: null,
-    image_url: null,
-  },
-  {
-    id: '3',
-    title: 'Bookstore Management System',
-    role: 'System Analyst / Project Leader',
-    description:
-      'A comprehensive bookstore management solution featuring inventory tracking, sales management, customer records, and reporting capabilities.',
-    tech: ['PHP', 'MySQL', 'HTML/CSS', 'JavaScript'],
-    impact: 'Streamlined bookstore operations with automated inventory and sales tracking.',
-    featured: false,
-    link: null,
-    image_url: null,
-  },
-  {
-    id: '4',
-    title: 'Pension System',
-    role: 'System Analyst / Project Leader',
-    description:
-      'A pension management system designed to handle beneficiary records, payment schedules, and administrative workflows.',
-    tech: ['PHP', 'MySQL', 'Database Design', 'CRUD Operations'],
-    impact: 'Demonstrated expertise in complex database design and sensitive data handling.',
-    featured: false,
-    link: null,
-    image_url: null,
-  },
-  {
-    id: '5',
-    title: 'QueECSA Queueing System',
-    role: 'Developer',
-    description:
-      'A digital queueing system developed for the LPU Cavite COECSA Accounting Office to streamline student services and reduce wait times.',
-    tech: ['Web Development', 'Queue Management', 'Real-time Updates'],
-    impact: 'Improved service efficiency for the university accounting department.',
-    featured: false,
-    link: null,
-    image_url: null,
+    name: 'Personal / Hobby Projects',
+    slug: 'personal',
+    description: 'Personal projects and experiments',
+    projects: [
+      {
+        id: '1',
+        title: 'InternInterview AI',
+        role: 'Creator / Developer',
+        detailed_description: 'An AI-powered interview preparation platform designed to help interns and job seekers practice and improve their interview skills.',
+        short_description: 'AI interview practice platform for job seekers',
+        tech: ['React', 'AI', 'TypeScript', 'Lovable'],
+        impact: null,
+        featured: true,
+        link: 'https://interninterview.lovable.app/',
+        image_url: null,
+        project_type: 'AI Tool',
+        status: 'Completed',
+      },
+    ],
   },
 ];
 
@@ -83,7 +57,7 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <div
       className={`glass-card p-6 lg:p-8 card-hover relative overflow-hidden ${
-        project.featured ? 'md:col-span-2 lg:col-span-1' : ''
+        project.featured ? 'ring-1 ring-primary/20' : ''
       }`}
     >
       {project.featured && (
@@ -107,11 +81,21 @@ function ProjectCard({ project }: { project: Project }) {
         )}
         
         <div>
-          <h3 className="text-xl lg:text-2xl font-bold text-foreground mb-1">{project.title}</h3>
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h3 className="text-xl lg:text-2xl font-bold text-foreground">{project.title}</h3>
+            {project.project_type && (
+              <Badge variant="outline" className="text-xs">{project.project_type}</Badge>
+            )}
+            {project.status === 'Ongoing' && (
+              <Badge variant="secondary" className="text-xs">In Progress</Badge>
+            )}
+          </div>
           <p className="text-primary text-sm font-medium">{project.role}</p>
         </div>
 
-        <p className="text-muted-foreground leading-relaxed">{project.description}</p>
+        <p className="text-muted-foreground leading-relaxed">
+          {project.short_description || project.detailed_description}
+        </p>
 
         <div className="flex flex-wrap gap-2">
           {project.tech.map((tech) => (
@@ -145,10 +129,44 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
+function CategorySection({ category }: { category: CategoryWithProjects }) {
+  // Convert category name to display format (e.g., "Personal / Hobby Projects" -> "Personal Projects")
+  const displayName = category.name.includes('/') 
+    ? `${category.name.split('/')[0].trim()} Projects`
+    : category.name;
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-primary/10">
+          <Folder className="w-5 h-5 text-primary" />
+        </div>
+        <div>
+          <h3 className="text-2xl font-bold text-foreground">{displayName}</h3>
+          {category.description && (
+            <p className="text-sm text-muted-foreground">{category.description}</p>
+          )}
+        </div>
+        <Badge variant="secondary" className="ml-auto">
+          {category.projects.length} {category.projects.length === 1 ? 'project' : 'projects'}
+        </Badge>
+      </div>
+      
+      <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+        {category.projects.map((project) => (
+          <ProjectCard key={project.id} project={project} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function ProjectsSection() {
-  const { data: projects, isLoading } = useProjects();
+  const { data: categoriesWithProjects, isLoading } = useProjectsWithCategories();
   
-  const displayProjects = projects && projects.length > 0 ? projects : defaultProjects;
+  const displayCategories = categoriesWithProjects && categoriesWithProjects.length > 0 
+    ? categoriesWithProjects 
+    : defaultCategories;
 
   return (
     <section id="projects" className="section-padding bg-background relative">
@@ -167,26 +185,33 @@ export function ProjectsSection() {
             </p>
           </div>
 
-          {/* Projects Grid */}
+          {/* Projects by Category */}
           {isLoading ? (
-            <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="glass-card p-6 lg:p-8 space-y-4">
-                  <Skeleton className="h-8 w-48" />
-                  <Skeleton className="h-4 w-32" />
-                  <Skeleton className="h-20 w-full" />
-                  <div className="flex gap-2">
-                    <Skeleton className="h-6 w-16" />
-                    <Skeleton className="h-6 w-16" />
-                    <Skeleton className="h-6 w-16" />
+            <div className="space-y-12">
+              {[1, 2].map((i) => (
+                <div key={i} className="space-y-6">
+                  <Skeleton className="h-10 w-64" />
+                  <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+                    {[1, 2].map((j) => (
+                      <div key={j} className="glass-card p-6 lg:p-8 space-y-4">
+                        <Skeleton className="h-8 w-48" />
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-20 w-full" />
+                        <div className="flex gap-2">
+                          <Skeleton className="h-6 w-16" />
+                          <Skeleton className="h-6 w-16" />
+                          <Skeleton className="h-6 w-16" />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-              {displayProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
+            <div className="space-y-16">
+              {displayCategories.map((category) => (
+                <CategorySection key={category.id} category={category} />
               ))}
             </div>
           )}
