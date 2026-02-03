@@ -63,11 +63,11 @@ Deno.serve(async (req) => {
     // Handle different resources
     const tables = [
       'hero_content', 'about_content', 'skill_categories', 'skills',
-      'projects', 'achievements', 'leadership_content', 'contact_info', 'site_settings'
+      'project_categories', 'projects', 'achievements', 'leadership_content', 'contact_info', 'site_settings'
     ];
 
     // Tables that have sort_order column
-    const tablesWithSortOrder = ['skill_categories', 'skills', 'projects', 'achievements'];
+    const tablesWithSortOrder = ['skill_categories', 'skills', 'project_categories', 'projects', 'achievements'];
 
     if (!tables.includes(resource)) {
       return new Response(

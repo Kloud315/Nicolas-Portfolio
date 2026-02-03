@@ -63,7 +63,52 @@ export function useSkillsWithCategories() {
   });
 }
 
-// Projects
+// Project Categories
+export function useProjectCategories() {
+  return useQuery({
+    queryKey: ['project-categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('project_categories')
+        .select('*')
+        .order('sort_order', { ascending: true });
+      
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
+// Projects with Categories
+export function useProjectsWithCategories() {
+  return useQuery({
+    queryKey: ['projects-with-categories'],
+    queryFn: async () => {
+      const { data: categories, error: catError } = await supabase
+        .from('project_categories')
+        .select('*')
+        .order('sort_order', { ascending: true });
+      
+      if (catError) throw catError;
+
+      const { data: projects, error: projectsError } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('is_visible', true)
+        .order('sort_order', { ascending: true });
+      
+      if (projectsError) throw projectsError;
+
+      // Group projects by category
+      return categories?.map(cat => ({
+        ...cat,
+        projects: projects?.filter(p => p.category_id === cat.id) || []
+      })).filter(cat => cat.projects.length > 0) || [];
+    },
+  });
+}
+
+// Projects (all for admin)
 export function useProjects() {
   return useQuery({
     queryKey: ['projects'],
