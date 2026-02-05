@@ -7,6 +7,7 @@ import { AchievementsSection } from '@/components/AchievementsSection';
 import { LeadershipSection } from '@/components/LeadershipSection';
 import { ContactSection } from '@/components/ContactSection';
 import { Footer } from '@/components/Footer';
+ import { PortfolioChat } from '@/components/PortfolioChat';
 
 const Index = () => {
   return (
@@ -22,6 +23,7 @@ const Index = () => {
         <ContactSection />
       </main>
       <Footer />
+     <PortfolioChat />
     </div>
   );
 };
