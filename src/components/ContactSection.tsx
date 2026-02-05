@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useContactInfo } from '@/hooks/use-portfolio-data';
 import { Skeleton } from '@/components/ui/skeleton';
+ import { supabase } from '@/integrations/supabase/client';
 
 export function ContactSection() {
   const { toast } = useToast();
@@ -28,15 +29,27 @@ export function ContactSection() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    toast({
-      title: 'Message Sent!',
-      description: "Thank you for reaching out. I'll get back to you soon.",
-    });
-
-    setFormData({ name: '', email: '', subject: '', message: '' });
+     try {
+       const { data, error } = await supabase.functions.invoke('send-contact-email', {
+         body: formData,
+       });
+ 
+       if (error) throw error;
+ 
+       toast({
+         title: 'Message Sent!',
+         description: "Thank you for reaching out. I'll get back to you soon.",
+       });
+ 
+       setFormData({ name: '', email: '', subject: '', message: '' });
+     } catch (error) {
+       console.error('Failed to send message:', error);
+       toast({
+         title: 'Failed to send',
+         description: 'Something went wrong. Please try again or email directly.',
+         variant: 'destructive',
+       });
+     }
     setIsSubmitting(false);
   };
 
