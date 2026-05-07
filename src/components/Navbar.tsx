@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Menu, X, Github, Linkedin, Download, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -6,8 +6,10 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 const navLinks = [
   { name: 'Home', href: '#home' },
   { name: 'Experience', href: '#experience' },
-  { name: 'Projects', href: '#projects' },
   { name: 'Skills', href: '#skills' },
+  { name: 'Projects', href: '#projects' },
+  { name: 'Achievements', href: '#achievements' },
+  { name: 'Certifications', href: '#certifications' },
   { name: 'Contact', href: '#contact' },
 ];
 
@@ -15,7 +17,12 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const firstFocusableRef = useRef<HTMLElement | null>(null);
+  const lastFocusableRef = useRef<HTMLElement | null>(null);
 
+  // Handle scroll and active section
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -40,6 +47,73 @@ export function Navbar() {
     handleScroll(); // Initial call
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Handle ESC key to close mobile menu
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+        mobileMenuButtonRef.current?.focus();
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMobileMenuOpen]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
+  // Focus trap within mobile menu
+  useEffect(() => {
+    if (isMobileMenuOpen && mobileMenuRef.current) {
+      const focusableElements = mobileMenuRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      );
+      
+      if (focusableElements.length > 0) {
+        firstFocusableRef.current = focusableElements[0];
+        lastFocusableRef.current = focusableElements[focusableElements.length - 1];
+        firstFocusableRef.current.focus();
+      }
+    }
+  }, [isMobileMenuOpen]);
+
+  const handleTabKey = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab' || !isMobileMenuOpen) return;
+
+    const focusableElements = mobileMenuRef.current?.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])'
+    );
+    
+    if (!focusableElements || focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey) {
+      if (document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    }
+  }, [isMobileMenuOpen]);
 
   const handleLinkClick = (href: string) => {
     setIsMobileMenuOpen(false);
@@ -126,9 +200,12 @@ export function Navbar() {
 
           {/* Minimalist Mobile Menu Button */}
           <button
+            ref={mobileMenuButtonRef}
             className="lg:hidden text-foreground p-2 rounded-lg hover:bg-secondary/30 transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -137,9 +214,15 @@ export function Navbar() {
 
       {/* Minimalist Mobile Menu */}
       <div
-        className={`lg:hidden absolute top-full left-0 right-0 bg-background/90 backdrop-blur-xl border-b border-border/30 transition-all duration-500 ${
+        ref={mobileMenuRef}
+        id="mobile-menu"
+        onKeyDown={handleTabKey}
+        className={`lg:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border/30 transition-all duration-500 max-h-[calc(100vh-80px)] overflow-y-auto ${
           isMobileMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
         }`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile navigation menu"
       >
         <div className="container mx-auto px-6 py-8 flex flex-col gap-2">
           {navLinks.map((link) => {

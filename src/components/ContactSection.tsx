@@ -99,24 +99,24 @@ export function ContactSection() {
           {/* Minimalist Section Header */}
           <div 
             ref={headerRef}
-            className={`text-center mb-20 transition-all duration-1200 ${
+            className={`text-center mb-12 sm:mb-16 md:mb-20 transition-all duration-1200 ${
               headerVisible ? 'scroll-reveal is-visible' : 'scroll-reveal'
             }`}
           >
-            <span className="text-primary text-xs font-light tracking-widest uppercase mb-6 block">
+            <span className="text-primary text-xs font-light tracking-widest uppercase mb-4 sm:mb-6 block">
               Let's Connect
             </span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-4 sm:mb-6 tracking-tight">
               Get In <span className="text-primary font-light">Touch</span>
             </h2>
-            <p className="text-lg md:text-xl text-muted-foreground font-light max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground font-light max-w-3xl mx-auto px-4 sm:px-0">
               Open to internships, software engineering roles, AI opportunities, and startup collaborations
             </p>
           </div>
 
           <div 
             ref={contentRef}
-            className={`grid lg:grid-cols-3 gap-12 lg:gap-16 transition-all duration-1200 delay-200 ${
+            className={`grid lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-16 transition-all duration-1200 delay-200 ${
               contentVisible ? 'scroll-reveal-scale is-visible' : 'scroll-reveal-scale'
             }`}
           >
@@ -235,30 +235,30 @@ export function ContactSection() {
 
             {/* Minimalist Contact Form */}
             <div className="lg:col-span-2">
-              <div className="p-8 border border-border/30 rounded-lg bg-card/30 backdrop-blur-sm">
-                <div className="mb-8">
-                  <h3 className="text-2xl font-medium text-foreground mb-3">Send Me a Message</h3>
-                  <p className="text-muted-foreground font-light mb-4">
+              <div className="p-4 sm:p-6 md:p-8 border border-border/30 rounded-lg bg-card/30 backdrop-blur-sm">
+                <div className="mb-6 sm:mb-8">
+                  <h3 className="text-xl sm:text-2xl font-medium text-foreground mb-2 sm:mb-3">Send Me a Message</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground font-light mb-4">
                     I'll get back to you as soon as possible. Let's discuss how we can work together!
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <a 
                       href="mailto:johnpatricknicolas15@gmail.com"
-                      className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                      className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm sm:text-base"
                     >
                       <Mail className="w-4 h-4" />
                       Quick Email
                     </a>
-                    <span className="inline-flex items-center justify-center text-sm text-muted-foreground font-light">
+                    <span className="inline-flex items-center justify-center text-xs sm:text-sm text-muted-foreground font-light">
                       Or use the form below
                     </span>
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  <div className="grid sm:grid-cols-2 gap-8">
+                <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+                  <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-foreground mb-3 font-light">
+                      <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2 sm:mb-3 font-light">
                         Your Name <span className="text-primary">*</span>
                       </label>
                       <input
@@ -268,12 +268,12 @@ export function ContactSection() {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-lg bg-input/50 border border-border/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-500"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-input/50 border border-border/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-500 text-sm sm:text-base"
                         placeholder="John Doe"
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-foreground mb-3 font-light">
+                      <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2 sm:mb-3 font-light">
                         Email Address <span className="text-primary">*</span>
                       </label>
                       <input
@@ -283,14 +283,14 @@ export function ContactSection() {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-lg bg-input/50 border border-border/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-500"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-input/50 border border-border/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-500 text-sm sm:text-base"
                         placeholder="john@example.com"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-3 font-light">
+                    <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2 sm:mb-3 font-light">
                       Subject <span className="text-primary">*</span>
                     </label>
                     <input
@@ -300,13 +300,13 @@ export function ContactSection() {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 rounded-lg bg-input/50 border border-border/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-500"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-input/50 border border-border/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-500 text-sm sm:text-base"
                       placeholder="Project Collaboration | Job Opportunity | General Inquiry"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-foreground mb-3 font-light">
+                    <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2 sm:mb-3 font-light">
                       Message <span className="text-primary">*</span>
                     </label>
                     <textarea
@@ -315,19 +315,19 @@ export function ContactSection() {
                       value={formData.message}
                       onChange={handleChange}
                       required
-                      rows={6}
-                      className="w-full px-4 py-3 rounded-lg bg-input/50 border border-border/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-500 resize-none"
+                      rows={5}
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg bg-input/50 border border-border/30 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-500 resize-none text-sm sm:text-base"
                       placeholder="Tell me about your project, opportunity, or how we can collaborate..."
                     />
                   </div>
 
-                  <div className="flex items-center gap-6 text-sm text-muted-foreground font-light">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 text-xs sm:text-sm text-muted-foreground font-light">
                     <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       <span>Response within 24 hours</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4" />
+                      <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       <span>All inquiries welcome</span>
                     </div>
                   </div>
@@ -335,7 +335,7 @@ export function ContactSection() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full gap-2 bg-primary hover:bg-primary/90 text-white border-0 transition-all duration-500 font-light"
+                    className="w-full gap-2 bg-primary hover:bg-primary/90 text-white border-0 transition-all duration-500 font-light py-2.5 sm:py-3 text-sm sm:text-base"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -345,7 +345,7 @@ export function ContactSection() {
                       </>
                     ) : (
                       <>
-                        <Send className="w-5 h-5" />
+                        <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                         Send Message
                       </>
                     )}

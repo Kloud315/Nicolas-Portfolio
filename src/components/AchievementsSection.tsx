@@ -17,7 +17,7 @@ interface Achievement {
   description: string | null;
 }
 
-// Premium achievements showcasing academic and technical excellence
+// Professional achievements showcasing academic and technical excellence
 const defaultAchievements = [
   {
     id: '1',
@@ -85,13 +85,13 @@ export function AchievementsSection() {
           {/* Section Header */}
           <div className="text-center mb-16">
             <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
-              Academic Excellence
+              Academic & Professional <span className="text-gradient">Achievements</span>
             </span>
             <h2 className="section-title">
               Achievements & <span className="text-gradient">Recognition</span>
             </h2>
             <p className="section-subtitle mx-auto mt-4">
-              Academic honors and competition achievements demonstrating excellence in technology and leadership
+              Academic honors, certifications, and professional recognition in technology and leadership
             </p>
           </div>
 

@@ -115,113 +115,113 @@
          },
        ]);
      } finally {
-       setIsLoading(false);
-     }
-   };
- 
-   return (
-     <>
-       {/* Chat Toggle Button */}
-       <button
-         onClick={() => setIsOpen(!isOpen)}
-         className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
-         aria-label={isOpen ? 'Close chat' : 'Open chat'}
-       >
-         {isOpen ? (
-           <X className="w-6 h-6" />
-         ) : (
-           <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform" />
-         )}
-       </button>
- 
-       {/* Chat Window */}
-       {isOpen && (
-         <div className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-48px)] h-[500px] max-h-[calc(100vh-120px)] bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
-           {/* Header */}
-           <div className="bg-primary text-primary-foreground p-4 flex items-center gap-3">
-             <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-               <Bot className="w-5 h-5" />
-             </div>
-             <div>
-               <h3 className="font-semibold">Portfolio Assistant</h3>
-               <p className="text-xs opacity-80">Ask me about John Patrick!</p>
-             </div>
-           </div>
- 
-           {/* Messages */}
-           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background">
-             {messages.map((msg, i) => (
-               <div
-                 key={i}
-                 className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-               >
-                 {msg.role === 'assistant' && (
-                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                     <Bot className="w-4 h-4 text-primary" />
-                   </div>
-                 )}
-                 <div
-                   className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                     msg.role === 'user'
-                       ? 'bg-primary text-primary-foreground rounded-br-md'
-                       : 'bg-muted text-foreground rounded-bl-md'
-                   }`}
-                 >
-                   {msg.role === 'assistant' ? (
-                     <div className="prose prose-sm dark:prose-invert max-w-none">
-                       <ReactMarkdown>{msg.content}</ReactMarkdown>
-                     </div>
-                   ) : (
-                     <p className="text-sm">{msg.content}</p>
-                   )}
-                 </div>
-                 {msg.role === 'user' && (
-                   <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                     <User className="w-4 h-4 text-primary-foreground" />
-                   </div>
-                 )}
-               </div>
-             ))}
-             {isLoading && messages[messages.length - 1]?.role === 'user' && (
-               <div className="flex gap-2 justify-start">
-                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                   <Bot className="w-4 h-4 text-primary" />
-                 </div>
-                 <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
-                   <div className="flex gap-1">
-                     <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                     <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                     <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                   </div>
-                 </div>
-               </div>
-             )}
-             <div ref={messagesEndRef} />
-           </div>
- 
-           {/* Input */}
-           <form onSubmit={handleSubmit} className="p-4 border-t border-border bg-card">
-             <div className="flex gap-2">
-               <input
-                 type="text"
-                 value={input}
-                 onChange={(e) => setInput(e.target.value)}
-                 placeholder="Ask about skills, projects..."
-                 className="flex-1 px-4 py-2 rounded-full bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-                 disabled={isLoading}
-               />
-               <Button
-                 type="submit"
-                 size="icon"
-                 className="rounded-full"
-                 disabled={isLoading || !input.trim()}
-               >
-                 <Send className="w-4 h-4" />
-               </Button>
-             </div>
-           </form>
-         </div>
-       )}
-     </>
-   );
- }
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {/* Chat Toggle Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+        aria-label={isOpen ? 'Close chat' : 'Open chat'}
+      >
+        {isOpen ? (
+          <X className="w-5 h-5 sm:w-6 sm:h-6" />
+        ) : (
+          <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform" />
+        )}
+      </button>
+
+      {/* Chat Window */}
+      {isOpen && (
+        <div className="fixed bottom-20 sm:bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[360px] max-w-[400px] h-[60vh] sm:h-[500px] max-h-[calc(100vh-100px)] bg-card border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
+          {/* Header */}
+          <div className="bg-primary text-primary-foreground p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+              <Bot className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-semibold">Portfolio Assistant</h3>
+              <p className="text-xs opacity-80">Ask me about John Patrick!</p>
+            </div>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background">
+            {messages.map((msg, i) => (
+              <div
+                key={i}
+                className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                {msg.role === 'assistant' && (
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-4 h-4 text-primary" />
+                  </div>
+                )}
+                <div
+                  className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+                    msg.role === 'user'
+                      ? 'bg-primary text-primary-foreground rounded-br-md'
+                      : 'bg-muted text-foreground rounded-bl-md'
+                  }`}
+                >
+                  {msg.role === 'assistant' ? (
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="text-sm">{msg.content}</p>
+                  )}
+                </div>
+                {msg.role === 'user' && (
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                )}
+              </div>
+            ))}
+            {isLoading && messages[messages.length - 1]?.role === 'user' && (
+              <div className="flex gap-2 justify-start">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Bot className="w-4 h-4 text-primary" />
+                </div>
+                <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+                  <div className="flex gap-1">
+                    <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input */}
+          <form onSubmit={handleSubmit} className="p-4 border-t border-border bg-card">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about skills, projects..."
+                className="flex-1 px-4 py-2 rounded-full bg-muted border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                disabled={isLoading}
+              />
+              <Button
+                type="submit"
+                size="icon"
+                className="rounded-full"
+                disabled={isLoading || !input.trim()}
+              >
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
+    </>
+  );
+}

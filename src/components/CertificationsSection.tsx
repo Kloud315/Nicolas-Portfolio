@@ -1,4 +1,4 @@
-import { Award, Cloud, Network, Code, Database, Shield, Brain } from 'lucide-react';
+import { Award, Cloud, Network, Code, Database, Shield, Brain, FileText } from 'lucide-react';
 
 interface Certification {
   id: string;
@@ -22,6 +22,7 @@ const certifications: Certification[] = [
     category: 'ai',
     status: 'completed',
     icon: 'Brain',
+    credentialId: '/Google AI Essentials Coursera.pdf'
   },
   {
     id: '2',
@@ -32,6 +33,7 @@ const certifications: Certification[] = [
     category: 'ai',
     status: 'completed',
     icon: 'Brain',
+    credentialId: '/Google Prompting Essentials.pdf'
   },
   {
     id: '3',
@@ -42,6 +44,7 @@ const certifications: Certification[] = [
     category: 'networking',
     status: 'completed',
     icon: 'Network',
+    credentialId: '/CCNAv7 Introduction to Networks Certificate.jpeg'
   },
   {
     id: '4',
@@ -52,6 +55,7 @@ const certifications: Certification[] = [
     category: 'database',
     status: 'completed',
     icon: 'Database',
+    credentialId: '/IT Specialist - Database.pdf'
   },
   {
     id: '5',
@@ -62,6 +66,7 @@ const certifications: Certification[] = [
     category: 'technical',
     status: 'completed',
     icon: 'Code',
+    credentialId: '/IT Specialist - HTML & CSS.pdf'
   },
   {
     id: '6',
@@ -70,30 +75,11 @@ const certifications: Certification[] = [
     date: '2024',
     description: 'Cloud computing fundamentals, system analysis, and cloud architecture principles.',
     category: 'cloud',
-    status: 'in-progress',
+    status: 'completed',
     icon: 'Cloud',
+    credentialId: '/Certified Cloud System Analyst (CCSA)-certificate.pdf'
   },
-  {
-    id: '7',
-    title: 'IT Specialist - Software Development',
-    issuer: 'Certiport',
-    date: '2023',
-    description: 'Software development principles, programming concepts, and application development.',
-    category: 'technical',
-    status: 'completed',
-    icon: 'Code',
-  },
-  {
-    id: '8',
-    title: 'IT Specialist - JavaScript',
-    issuer: 'Certiport',
-    date: '2023',
-    description: 'Advanced JavaScript programming, ES6+ features, and modern web development.',
-    category: 'technical',
-    status: 'completed',
-    icon: 'Code',
-  },
-];
+    ];
 
 const iconMap: Record<string, React.ElementType> = {
   Brain,
@@ -197,12 +183,21 @@ function CertificationCard({ certification, index }: { certification: Certificat
           {certification.description}
         </p>
 
-        {/* Credential ID */}
+        {/* Credential Proof */}
         {certification.credentialId && (
           <div className="pt-2 border-t border-border/50">
-            <span className="text-xs text-muted-foreground">
-              Credential ID: {certification.credentialId}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Credential Proof:</span>
+              <a 
+                href={certification.credentialId} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+              >
+                <span>View Certificate</span>
+                <Award className="w-3 h-3" />
+              </a>
+            </div>
           </div>
         )}
       </div>

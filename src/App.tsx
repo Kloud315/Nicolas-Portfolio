@@ -16,6 +16,7 @@ import AdminAchievements from "./pages/admin/AdminAchievements";
 import AdminLeadership from "./pages/admin/AdminLeadership";
 import AdminContact from "./pages/admin/AdminContact";
 import AdminSettings from "./pages/admin/AdminSettings";
+import RemoveCertifications from "./pages/RemoveCertifications";
 import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 
@@ -59,6 +60,9 @@ const App = () => (
             <Route path="contact" element={<AdminContact />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
+          
+          {/* Temporary route to remove certifications */}
+          <Route path="/remove-certifications" element={<RemoveCertifications />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
