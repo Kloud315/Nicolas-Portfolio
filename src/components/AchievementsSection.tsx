@@ -17,49 +17,55 @@ interface Achievement {
   description: string | null;
 }
 
-// Fallback achievements if database is empty
+// Premium achievements showcasing academic and technical excellence
 const defaultAchievements = [
   {
     id: '1',
     icon: 'GraduationCap',
     title: 'DOST-SEI Scholar',
     description: 'RA7687 Science and Technology Scholarship recipient since 2022',
+    category: 'academic',
+    highlight: true,
   },
   {
     id: '2',
     icon: 'Award',
     title: 'Magna Cum Laude Candidate',
-    description: 'Maintaining a GWA of 1.35 with consistent academic excellence',
+    description: 'Maintaining exceptional GWA of 1.35 with consistent academic excellence',
+    category: 'academic',
+    highlight: true,
   },
   {
     id: '3',
     icon: 'Award',
-    title: "Consistent Dean's Lister",
-    description: "Recognized on the Dean's List every semester from 1st Year to Present",
+    title: 'Silver Medal Award',
+    description: 'Recognition for outstanding academic performance and leadership',
+    category: 'academic',
+    highlight: false,
   },
   {
     id: '4',
-    icon: 'BadgeCheck',
-    title: 'IT Specialist - Database',
-    description: 'Professional certification in database management and operations',
+    icon: 'Award',
+    title: "Consistent Dean's Lister",
+    description: "Dean's List recognition every semester from 1st Year to Present",
+    category: 'academic',
+    highlight: false,
   },
   {
     id: '5',
-    icon: 'BadgeCheck',
-    title: 'IT Specialist - HTML & CSS',
-    description: 'Professional certification in web development fundamentals',
+    icon: 'Network',
+    title: 'National IT Skills Competition',
+    description: 'Represented university at ISITE Inc. national IT competition',
+    category: 'competition',
+    highlight: false,
   },
   {
     id: '6',
-    icon: 'Network',
-    title: 'CCNA: Introduction to Networks',
-    description: 'Badge certification in networking fundamentals',
-  },
-  {
-    id: '7',
-    icon: 'Cloud',
-    title: 'Certified Cloud System Analyst',
-    description: 'Ongoing certification in cloud computing and system analysis',
+    icon: 'Award',
+    title: 'Best Capstone Nominee',
+    description: 'Nominated for best capstone project among graduating class',
+    category: 'academic',
+    highlight: false,
   },
 ];
 
@@ -69,19 +75,23 @@ export function AchievementsSection() {
   const displayAchievements = achievements && achievements.length > 0 ? achievements : defaultAchievements;
 
   return (
-    <section id="achievements" className="section-padding bg-card/50 relative">
-      <div className="container px-4 sm:px-6 lg:px-8">
+    <section id="achievements" className="section-padding bg-background relative">
+      {/* Background decoration */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-accent-emerald/10 to-accent-cyan/10 rounded-full blur-3xl animate-float" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-accent-purple/10 to-accent-emerald/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '-3s' }} />
+
+      <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16">
             <span className="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">
-              Recognition
+              Academic Excellence
             </span>
             <h2 className="section-title">
-              Achievements & <span className="text-gradient">Certifications</span>
+              Achievements & <span className="text-gradient">Recognition</span>
             </h2>
             <p className="section-subtitle mx-auto mt-4">
-              Academic honors and professional certifications demonstrating commitment to excellence
+              Academic honors and competition achievements demonstrating excellence in technology and leadership
             </p>
           </div>
 
@@ -102,24 +112,60 @@ export function AchievementsSection() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayAchievements.map((achievement: Achievement, index: number) => {
+              {displayAchievements.map((achievement: any, index: number) => {
                 const IconComponent = iconMap[achievement.icon || 'Award'] || Award;
                 
                 return (
                   <div
                     key={achievement.id}
-                    className="glass-card p-6 card-hover group"
+                    className={`group relative overflow-hidden rounded-2xl glass-card p-6 hover:scale-105 transition-all duration-300 ${
+                      achievement.highlight 
+                        ? 'bg-gradient-to-br from-accent-emerald/5 via-accent-cyan/5 to-accent-purple/5 border border-accent-emerald/30 shadow-lg hover:shadow-xl' 
+                        : 'border-border/50'
+                    }`}
                     style={{ animationDelay: `${index * 0.05}s` }}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 border border-primary/30 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                        <IconComponent className="w-6 h-6 text-primary" />
+                    {/* Highlight badge */}
+                    {achievement.highlight && (
+                      <div className="absolute top-4 right-4">
+                        <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-accent-emerald/20 to-accent-cyan/20 border border-accent-emerald/30 backdrop-blur-sm">
+                          <span className="text-xs text-accent-emerald font-semibold">⭐ Featured</span>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <h3 className="font-semibold text-foreground leading-tight">{achievement.title}</h3>
-                        {achievement.description && (
-                          <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                        )}
+                    )}
+
+                    {/* Animated background gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent-emerald/5 via-transparent to-accent-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    <div className="relative">
+                      <div className="flex items-start gap-4">
+                        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0 group-hover:animate-pulse-glow ${
+                          achievement.highlight
+                            ? 'from-accent-emerald to-accent-cyan'
+                            : 'from-primary to-accent-purple'
+                        }`}>
+                          <IconComponent className="w-7 h-7 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-foreground leading-tight text-lg mb-2 group-hover:text-gradient transition-colors">
+                            {achievement.title}
+                          </h3>
+                          {achievement.description && (
+                            <p className="text-sm text-muted-foreground leading-relaxed">{achievement.description}</p>
+                          )}
+                          
+                          {/* Category badge */}
+                          <div className="mt-3">
+                            <span className={`inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-full capitalize ${
+                              achievement.category === 'academic'
+                                ? 'bg-accent-emerald/10 text-accent-emerald border border-accent-emerald/20'
+                                : 'bg-accent-blue/10 text-accent-blue border border-accent-blue/20'
+                            }`}>
+                              <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                              {achievement.category}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
