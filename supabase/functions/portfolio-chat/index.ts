@@ -39,7 +39,7 @@ const PORTFOLIO_CONTEXT = `You are an AI assistant representing John Patrick Nic
 ## Key AI-Enabled Projects (live links)
 1. **InternInterview AI** — interview preparation platform (https://interninterview.lovable.app/)
 2. **Fortune Recruit AI** — recruitment dashboard (https://fortune-recruit-ai.base44.app/)
-3. **Fortune Packaging Knowledge Base** — AI knowledge management (https://fortunepackaging-knowledge.lovable.app/)
+3. **Company Knowledge Base** — AI knowledge management
 4. **Profile Screening Tool** (https://nicolasprofilescreening.lovable.app/)
 5. **Resume Comparison AI** (https://nicolascompareresumeai.lovable.app/)
 6. **StepUp Technical Documentation** (https://stepuptechnicaldocumentation.lovable.app/)
