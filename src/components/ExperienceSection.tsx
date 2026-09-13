@@ -5,24 +5,24 @@ const experiences = [
   {
     id: 1,
     title: 'AI Full Stack Engineer | Team Lead | Backend Engineer',
-    company: 'StartUplab Business Center (HRIS SaaS Platform)',
-    location: 'Hybrid',
-    duration: 'JAN 2026 – APRIL 2026',
+    company: 'StartupLab Business Center & AI Consulting Agency OPC',
+    location: 'Cavite, Philippines',
+    duration: 'JAN 2026 – APR 2026',
     type: 'full-time',
-    description: 'Building and delivering HRIS SaaS Platform at StartUplab Business Center startup incubator. Delivered 12+ production HRIS modules (Attendance, Leave, Payroll workflows, Recruitment, Onboarding, and Workforce) using Laravel, React/TypeScript, and modern UI frameworks on a live SaaS Platform while mentoring startup teams.',
+    description: 'Built and deployed production HRIS modules at a startup incubator, combining AI integrations with Laravel, React, TypeScript, and Inertia.js.',
     achievements: [
-      'Built and delivered 12+ production HRIS modules using Laravel, React/TypeScript, and modern UI frameworks',
-      'Led Agile sprints for 11 weeks as Scrum Master, coordinating directly with CEO and HR Director',
-      'Deployed to production with CI/CD GitHub Actions; scaled system from 100 to 1,000 users under stress testing',
-      'Developed 5 AI HR tools and 80+ file technical documentation; resolved 60+ backend issues across modules',
-      'Mentored multiple startup teams on technical architecture and project development at the business incubator'
+      'Built 12+ live HRIS modules including attendance, leave, overtime, workforce management, requisition, onboarding, and meetings',
+      'Led 11 consecutive weeks of Agile sprints as Scrum Master across 13+ sessions with the CEO, HR Director, and clients',
+      'Deployed on Hostinger with 50+ database tables migrated and GitHub Actions CI/CD; passed a 1,000-user stress test after a 100-user failure',
+      'Prototyped 5 AI HR tools in 2 days and created a 68-file technical documentation library',
+      'Resolved 60+ backend bugs across 5+ modules and implemented multi-tenant company data isolation'
     ],
     technologies: ['Laravel', 'React', 'TypeScript', 'PHP', 'GitHub Actions', 'CI/CD', 'Mentoring'],
     metrics: {
       modules: '12+',
       users: '1,000',
       sprint: '11 weeks',
-      documentation: '80+'
+      documentation: '68 files'
     },
     links: {
       live: '#',
@@ -32,18 +32,17 @@ const experiences = [
   {
     id: 3,
     title: 'GameSchedGo - Sports Facility Reservation System',
-    company: 'Government of Trece Martires, Cavite',
+    company: 'City Government of Trece Martires, Cavite',
     location: 'Trece Martires, Cavite',
     duration: 'JAN – DEC 2025',
     type: 'project',
-    description: 'Architected and fully deployed a Sports Facility Reservation & League Management System for a City Government live at GameSchedGo.com (Hostinger). IEEE manuscript submitted for publication.',
+      description: 'Architected and fully deployed a Sports Facility Reservation & League Management System for the City Government of Trece Martires, Cavite.',
     achievements: [
-      'Architected and fully deployed Sports Facility Reservation & League Management System',
       'System is live at GameSchedGo.com on Hostinger hosting',
       'IEEE manuscript submitted for publication',
-      'Serves City Government of Trece Martires operations'
+      'Designed for city government sports facility and league operations'
     ],
-    technologies: ['Laravel', 'React', 'MySQL', 'Hostinger'],
+    technologies: ['Sports Management', 'Reservations', 'League Management', 'Hostinger'],
     metrics: {
       status: 'Live',
       manuscript: 'Submitted',
@@ -61,10 +60,9 @@ const experiences = [
     location: 'LPU Cavite',
     duration: 'AUG - OCT 2025',
     type: 'project',
-    description: 'Led end-to-end event management for having 1 local & 1 foreign cybersecurity expert as keynote speakers.',
+    description: 'Led end-to-end event management for a university cybersecurity seminar at LPU Cavite.',
     achievements: [
-      'Led end-to-end event management for cybersecurity seminar',
-      'Coordinated 1 local and 1 foreign cybersecurity expert as keynote speakers',
+      'Coordinated one local industry speaker and one foreign cybersecurity expert as keynote speakers',
       'Managed event logistics and speaker coordination',
       'Organized university-level cybersecurity seminar'
     ],
@@ -86,12 +84,9 @@ const experiences = [
     location: 'National Competition',
     duration: 'SEPT - OCT 2025',
     type: 'startup',
-    description: 'Led national-level startup pitch having sukey as localized B2B Marketplace CMS targeting Philippine MSMEs.',
+    description: 'Led a national-level startup pitch for Sukey, a localized B2B Marketplace CMS targeting Philippine MSMEs.',
     achievements: [
-      'Led national-level startup pitch competition',
-      'Developed Sukey as localized B2B Marketplace CMS',
-      'Targeted Philippine MSMEs market',
-      'Reached national competition finals'
+      'Presented the product at the Philippines Startup Challenge 10'
     ],
     technologies: ['Next.js', 'TypeScript', 'CMS', 'B2B', 'Startup'],
     metrics: {
@@ -112,14 +107,11 @@ const experiences = [
     location: 'Cavite, Philippines',
     duration: '2022 - PRESENT',
     type: 'full-time',
-    description: 'Active in Chibis daily operations, business decisions, and process improvement across 5 branches in Cavite. Developing a full production-grade all-in-one business system using modern stack.',
+    description: 'Active in daily operations, business decisions, and process improvement across 5 branches in Cavite while developing an all-in-one business system.',
     achievements: [
-      'Active in daily operations across 5 branches',
-      'Business decisions and process improvement',
-      'Developing production-grade all-in-one business system',
-      'Managing multi-branch operations'
+      'Developing a production-grade system covering attendance, payroll, inventory, and POS',
     ],
-    technologies: ['Laravel', 'React', 'TypeScript', 'Business Systems', 'Multi-branch'],
+    technologies: ['Node.js 18', 'Express.js', 'TypeScript', 'Next.js 14', 'PostgreSQL', 'Prisma', 'Redis', 'Socket.io', 'Docker'],
     metrics: {
       branches: '5',
       duration: '2022-Present',

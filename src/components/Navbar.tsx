@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Menu, X, Github, Linkedin, Download, Mail } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Menu, X, Github, Linkedin, Mail } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navLinks = [
@@ -190,12 +189,6 @@ export function Navbar() {
                 <Linkedin size={18} />
               </a>
             </div>
-            <a href="/Nicolas_LPU_Cavite_Resume.pdf" download>
-              <Button variant="outline" size="sm" className="gap-2 border-border hover:border-primary hover:bg-primary/5">
-                <Download size={16} />
-                Resume
-              </Button>
-            </a>
           </div>
 
           {/* Minimalist Mobile Menu Button */}
@@ -264,12 +257,6 @@ export function Navbar() {
             </a>
           </div>
           
-          <a href="/Nicolas_LPU_Cavite_Resume.pdf" download className="pt-4">
-            <Button variant="outline" className="w-full gap-2 border-border hover:border-primary hover:bg-primary/5">
-              <Download size={16} />
-              Download Resume
-            </Button>
-          </a>
         </div>
       </div>
     </nav>
