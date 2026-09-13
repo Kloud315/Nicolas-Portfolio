@@ -1,6 +1,6 @@
 import { ArrowDown, Mail, Github, Linkedin, Code, Users, Rocket, Award, Brain, Cpu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useHeroContent, useAboutContent } from '@/hooks/use-portfolio-data';
+import { useHeroContent } from '@/hooks/use-portfolio-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useScrollReveal } from '@/hooks/use-scroll-reveal';
 
@@ -29,7 +29,6 @@ const engineeringTraits = [
 
 export function HeroSection() {
   const { data: heroContent, isLoading: heroLoading } = useHeroContent();
-  const { data: aboutContent, isLoading: aboutLoading } = useAboutContent();
   const { ref: heroRef, isVisible: heroVisible } = useScrollReveal();
   const { ref: aboutRef, isVisible: aboutVisible } = useScrollReveal();
   const { ref: traitsRef, isVisible: traitsVisible } = useScrollReveal();
@@ -202,18 +201,10 @@ can solve complex business challenges and create competitive advantages.`;
               aboutVisible ? 'scroll-reveal is-visible' : 'scroll-reveal'
             }`}
           >
-            {aboutLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-6 w-full" />
-                <Skeleton className="h-6 w-full" />
-                <Skeleton className="h-6 w-3/4" />
-              </div>
-            ) : (
-              <div 
-                className="text-lg text-muted-foreground leading-relaxed space-y-6 [&>p]:mb-4 font-light"
-                dangerouslySetInnerHTML={{ __html: aboutContent?.content || engineeringContent }}
-              />
-            )}
+            <div 
+              className="text-lg text-muted-foreground leading-relaxed space-y-6 [&>p]:mb-4 font-light"
+              dangerouslySetInnerHTML={{ __html: engineeringContent }}
+            />
           </div>
 
           {/* Engineering Traits */}
