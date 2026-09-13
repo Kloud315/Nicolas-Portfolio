@@ -1,4 +1,4 @@
-import { Compass, Crown, Zap, TrendingUp, Eye, Brain } from 'lucide-react';
+import { Compass, Crown, Zap, TrendingUp, Eye, Brain, Users } from 'lucide-react';
 import { useLeadershipContent } from '@/hooks/use-portfolio-data';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -9,6 +9,7 @@ const iconMap: Record<string, React.ElementType> = {
   TrendingUp,
   Eye,
   Brain,
+  Users,
 };
 
 interface LeadershipTrait {
@@ -63,22 +64,22 @@ const experiences = [
   {
     title: 'Philippines Startup Challenge 10',
     role: 'Startup Leader - Sukey',
-    description: 'Led a team to develop and pitch a B2B marketplace CMS for Philippine MSMEs',
+    description: 'Led a national-level startup pitch for Sukey, a localized B2B marketplace CMS targeting Philippine MSMEs',
   },
   {
     title: 'Cyber Jump 2025 Seminar',
     role: 'Event Manager',
-    description: 'Organized university seminar on cybersecurity career development',
+    description: 'Led end-to-end management of a university cybersecurity seminar with local and foreign keynote speakers',
   },
   {
     title: 'Family Food Business',
     role: 'Operations Support',
-    description: 'Assisted in digital record-keeping and process improvement across 3 branches',
+    description: 'Active in daily operations, business decisions, and process improvement across 5 branches in Cavite',
   },
   {
     title: 'National IT Skills Competition',
     role: 'Participant',
-    description: 'Represented university at ISITE Inc. national competition',
+    description: 'Participated in the C# category of the ISITE Inc. National IT Skills Competition',
   },
 ];
 

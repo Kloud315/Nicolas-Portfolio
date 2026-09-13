@@ -32,10 +32,10 @@ export function AboutSection() {
   const { ref: contentRef, isVisible: contentVisible } = useScrollReveal();
   const { ref: traitsRef, isVisible: traitsVisible } = useScrollReveal();
 
-  const engineeringContent = `As an <span class="text-foreground font-medium">AI-enabled BSIT student</span> at 
-Lyceum of the Philippines University – Cavite, I'm building the next generation of intelligent software systems. 
+  const engineeringContent = `As an <span class="text-foreground font-medium">AI Full Stack Engineer and Magna Cum Laude BSIT graduate</span> from 
+Lyceum of the Philippines University – Cavite, I graduated on August 19, 2026 and I'm building the next generation of intelligent software systems. 
 As a <span class="text-primary font-medium">DOST-SEI Scholar</span> and 
-<span class="text-primary font-medium">Magna Cum Laude candidate (GWA 1.35)</span>, I combine academic excellence 
+<span class="text-primary font-medium">Magna Cum Laude graduate (GWA 1.33)</span>, I combine academic excellence 
 with <span class="text-foreground font-medium">430+ hours of production engineering experience</span>.
 
 My expertise spans the full development lifecycle—from architecting scalable systems to deploying 

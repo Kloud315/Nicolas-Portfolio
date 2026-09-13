@@ -15,6 +15,7 @@ interface Achievement {
   icon: string | null;
   title: string;
   description: string | null;
+  highlight?: boolean;
 }
 
 // Professional achievements showcasing academic and technical excellence
@@ -30,8 +31,8 @@ const defaultAchievements = [
   {
     id: '2',
     icon: 'Award',
-    title: 'Magna Cum Laude Candidate',
-    description: 'Maintaining exceptional GWA of 1.35 with consistent academic excellence',
+    title: 'Magna Cum Laude',
+    description: 'Graduated with a GWA of 1.33 after consistent academic excellence',
     category: 'academic',
     highlight: true,
   },
@@ -39,7 +40,7 @@ const defaultAchievements = [
     id: '3',
     icon: 'Award',
     title: 'Silver Medal Award',
-    description: 'Recognition for outstanding academic performance and leadership',
+    description: 'Academic Excellence award for 8 consecutive semesters of outstanding performance at LPU Cavite',
     category: 'academic',
     highlight: false,
   },
@@ -47,7 +48,7 @@ const defaultAchievements = [
     id: '4',
     icon: 'Award',
     title: "Consistent Dean's Lister",
-    description: "Dean's List recognition every semester from 1st Year to Present",
+    description: "Dean's List recognition from first year through graduation",
     category: 'academic',
     highlight: false,
   },
@@ -55,7 +56,7 @@ const defaultAchievements = [
     id: '5',
     icon: 'Network',
     title: 'National IT Skills Competition',
-    description: 'Represented university at ISITE Inc. national IT competition',
+    description: 'Participant in the C# category at the ISITE Inc. National IT Skills Competition',
     category: 'competition',
     highlight: false,
   },
@@ -63,7 +64,7 @@ const defaultAchievements = [
     id: '6',
     icon: 'Award',
     title: 'Best Capstone Nominee',
-    description: 'Nominated for best capstone project among graduating class',
+    description: 'One of only three nominees in the full BSIT graduating batch for GameSchedGo',
     category: 'academic',
     highlight: false,
   },
@@ -112,7 +113,7 @@ export function AchievementsSection() {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayAchievements.map((achievement: any, index: number) => {
+              {displayAchievements.map((achievement: Achievement, index: number) => {
                 const IconComponent = iconMap[achievement.icon || 'Award'] || Award;
                 
                 return (

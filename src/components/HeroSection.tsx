@@ -1,6 +1,6 @@
-import { ArrowDown, Download, Mail, Github, Linkedin, Code, Users, Rocket, Award, Brain, Cpu } from 'lucide-react';
+import { ArrowDown, Mail, Github, Linkedin, Code, Users, Rocket, Award, Brain, Cpu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useHeroContent, useSiteSettings, useAboutContent } from '@/hooks/use-portfolio-data';
+import { useHeroContent, useAboutContent } from '@/hooks/use-portfolio-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useScrollReveal } from '@/hooks/use-scroll-reveal';
 
@@ -29,18 +29,15 @@ const engineeringTraits = [
 
 export function HeroSection() {
   const { data: heroContent, isLoading: heroLoading } = useHeroContent();
-  const { data: siteSettings } = useSiteSettings();
   const { data: aboutContent, isLoading: aboutLoading } = useAboutContent();
   const { ref: heroRef, isVisible: heroVisible } = useScrollReveal();
   const { ref: aboutRef, isVisible: aboutVisible } = useScrollReveal();
   const { ref: traitsRef, isVisible: traitsVisible } = useScrollReveal();
 
-  const resumeUrl = siteSettings?.resume_url || '/Nicolas_LPU_Cavite_Resume.pdf';
-
-  const engineeringContent = `As an <span class="text-foreground font-medium">AI-enabled BSIT student</span> at 
+  const engineeringContent = `As an <span class="text-foreground font-medium">AI Full Stack Engineer and Magna Cum Laude BSIT graduate</span> from 
 Lyceum of the Philippines University – Cavite, I'm building the next generation of intelligent software systems. 
 As a <span class="text-primary font-medium">DOST-SEI Scholar</span> and 
-<span class="text-primary font-medium">Magna Cum Laude candidate (GWA 1.35)</span>, I combine academic excellence 
+<span class="text-primary font-medium">Magna Cum Laude graduate (GWA 1.33)</span>, I combine academic excellence 
 with <span class="text-foreground font-medium">430+ hours of production engineering experience</span>.
 
 My expertise spans the full development lifecycle—from architecting scalable systems to deploying 
@@ -49,7 +46,7 @@ AI-integrated solutions that serve real users. I've led the development of
 <span class="text-foreground font-medium">100 to 1000+ users</span>, demonstrating my ability to build 
 production-grade software that delivers measurable business value.
 
-With a foundation in <span class="text-primary font-medium">Laravel, PHP, Inertia.js, and MySQL</span>, 
+With a foundation in <span class="text-primary font-medium">Laravel, React, TypeScript, and AI technologies</span>, 
 I specialize in creating intelligent SaaS solutions that automate workflows and enhance user experiences. 
 My leadership experience includes managing development teams using Agile methodologies and driving technical 
 decisions that align with business objectives.
@@ -249,12 +246,6 @@ can solve complex business challenges and create competitive advantages.`;
               <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 text-white border-0 transition-all duration-300">
                 <Code className="w-4 h-4" />
                 View Experience
-              </Button>
-            </a>
-            <a href={resumeUrl} download>
-              <Button variant="outline" size="lg" className="gap-2 border-border hover:border-primary hover:bg-primary/5 transition-all duration-300">
-                <Download className="w-4 h-4" />
-                Resume
               </Button>
             </a>
             <a href="#projects">

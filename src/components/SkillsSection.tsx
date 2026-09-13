@@ -28,12 +28,12 @@ const defaultSkillCategories = [
   {
     id: '5',
     title: 'DevOps & Cloud',
-    skills: ['GitHub Actions CI/CD', 'Docker', 'Hostinger', 'AWS', 'Git', 'Vercel', 'Railway', 'Firebase', 'Supabase']
+    skills: ['GitHub Actions CI/CD', 'Docker', 'Docker Compose', 'Hostinger', 'AWS', 'Vercel', 'Railway', 'Firebase', 'Supabase', 'Git', 'YAML']
   },
   {
     id: '6',
     title: 'Tools',
-    skills: ['Windsurf', 'Antigravity', 'Cursor', 'Lovable.dev', 'Bolt.new', 'NotebookLM', 'Prompt & Context Engineering']
+    skills: ['Windsurf', 'Antigravity', 'Cursor', 'Lovable.dev', 'Bolt.new', 'base44', 'NotebookLM', 'Prompt & Context Engineering', 'n8n', 'Make.com', 'Zapier', 'Claude', 'OpenAI', 'Gemini Flash', 'Webhooks']
   },
   {
     id: '7',
@@ -145,7 +145,7 @@ export function SkillsSection() {
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-primary" />
                 <span className="text-sm text-muted-foreground font-light">
-                  <span className="font-medium text-foreground">&lt; 1</span> Year Experience
+                  <span className="font-medium text-foreground">430+</span> Production Hours
                 </span>
               </div>
             </div>
