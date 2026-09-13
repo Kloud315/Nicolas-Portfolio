@@ -71,9 +71,9 @@ const defaultAchievements = [
 ];
 
 export function AchievementsSection() {
-  const { data: achievements, isLoading } = useAchievements();
+  const { isLoading } = useAchievements();
   
-  const displayAchievements = achievements && achievements.length > 0 ? achievements : defaultAchievements;
+  const displayAchievements = defaultAchievements;
 
   return (
     <section id="achievements" className="section-padding bg-background relative">
